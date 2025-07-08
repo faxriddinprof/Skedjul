@@ -12,7 +12,6 @@
             <thead>
                 <tr>
                 <th>N</th>
-                <th>Muallif</th>
                 <th>ish reja</th>
                 <th>Ish izohi</th>
                 <th>Sana</th>
@@ -25,9 +24,9 @@
                     <div class="post-entry">
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <th>{{post.author}}</th>
                     <th><a href="{% url 'post_detail' post.pk %}">{{post.title}}</a></th>
                     <th>{{post.text}}</th>
+                    <!-- <th>{{post.sana}}</th> -->
                     <th>{{post.date}}</th>
                     <td>
                         {% if post.holati %}

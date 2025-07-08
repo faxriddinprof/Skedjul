@@ -4,9 +4,10 @@ from django.urls import reverse
 
 class Post(models.Model):
     title=models.TextField()
-    author=models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    # author=models.ForeignKey("auth.User", on_delete=models.CASCADE)
     text=models.TextField()
-    date=models.DateField(auto_now_add=True)
+    # sana=models.DateField(auto_now_add=True)
+    date=models.DateField()
     holati=models.BooleanField(default=False)
 
 

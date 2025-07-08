@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from .models import Post
-from django import forms
+from .forms import DateInput, PromiseForm
 # Create your views here.
 
 
@@ -14,8 +14,9 @@ class Homepageview(ListView):
 
 class BlogCreateview(CreateView):
     model = Post
+    form_class=PromiseForm
     template_name='post_create.html'
-    fields=['title','author','text','holati']
+
 
 
 class BlogDetailview(DetailView):
