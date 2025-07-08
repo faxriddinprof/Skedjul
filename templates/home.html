@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>this is home page </h1>
+
+
+<p><a href="{% url 'post_create'%}"> Yangi post qo'shish</a></p>
+
+    <div class="post-entry">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th>N</th>
+                <th>Muallif</th>
+                <th>ish reja</th>
+                <th>Ish izohi</th>
+                <th>Sana</th>
+                <th>Holati</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {%for post in object_list%}
+                    <div class="post-entry">
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <th>{{post.author}}</th>
+                    <th><a href="{% url 'post_detail' post.pk %}">{{post.title}}</a></th>
+                    <th>{{post.text}}</th>
+                    <th>{{post.date}}</th>
+                    <td>
+                        {% if post.holati %}
+                            Bajarildi
+                        {% else %}
+                            Bajarilmadi
+                        {% endif %}
+                    </td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+        <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+    </style>
+
+    </div>
+
+
+{%endblock content%}
