@@ -1,0 +1,189 @@
+/* === Umumiy font va table === */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #999;
+    padding: 10px;
+    text-align: center;
+}
+
+/* === Modal (Tahrirlash va Holat) === */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+}
+
+/* Modal oynasi */
+.modal-content {
+    background-color: #fff;
+    margin: 8% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease-in-out;
+    position: relative;
+}
+
+/* Animatsiya */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 22px;
+}
+
+/* Yopish tugmasi (×) */
+.modal .close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+}
+
+.modal .close:hover {
+    color: black;
+}
+
+/* === Modal Form Elementlari === */
+.modal-body textarea,
+.modal-body input[type="date"],
+.modal-body input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.modal-body select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Saqlash tugmasi */
+.modal-body button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.modal-body button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* O‘chirish tugmasi */
+.modal-body button[type="button"] {
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.modal-body button[type="button"]:hover {
+    background-color: #c0392b;
+}
+
+/* Modal footer (status uchun) */
+.modal-footer {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.modal-footer button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-footer button:hover {
+    background-color: #45a049;
+}
+
+/* Edit tugmasi */
+.open-edit-modal {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.open-edit-modal:hover {
+    background-color: #0b7dda;
+}
+
+/* Status tugmasi */
+.open-modal-btn {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.open-modal-btn:hover {
+    background-color: #e67e22;
+}
