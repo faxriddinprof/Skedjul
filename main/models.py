@@ -3,25 +3,30 @@ from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-# Create your models here.
+KATEGORIYALAR = [
+    ('ovqat', 'Ovqat'),
+    ('transport', 'Transport'),
+    ('salomatlik', 'Salomatlik'),
+    ('boshqa', 'Boshqa'),
+]
 
-
-class Post(models.Model):
-    title=models.TextField()
-    # author=models.ForeignKey("auth.User", on_delete=models.CASCADE)
-    text=models.TextField()
-    # sana=models.DateField(auto_now_add=True)
-    date=models.DateField()
-    holati=models.BooleanField(default=False)
-
-    
+class DailyExpense(models.Model):
+    date = models.DateField(default=timezone.now)
+    ovqat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transport = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    salomatlik = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    boshqa = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    izoh = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.title
-    
+        return f"{self.date} - Jami: {self.total_sum()}"
+
     def get_absolute_url(self):
-        return reverse("post_detail", args=[str(self.pk)])
-    
+        return reverse("home")
+
+    def total_sum(self):
+        return self.ovqat + self.transport + self.salomatlik + self.boshqa
+
     def clean(self):
         super().clean()
         if self.date < timezone.now().date():

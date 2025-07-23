@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="login-container">
+    <h2>🔐 Tizimga kirish</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Kirish</button>
+    </form>
+    <p>Akkauntingiz yo‘qmi? <a href="{% url 'signup' %}">Ro‘yxatdan o‘tish</a></p>
+</div>
+{% endblock %}

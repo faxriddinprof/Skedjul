@@ -1,17 +1,15 @@
 from django import forms
-from django.forms import ModelForm
+from .models import DailyExpense
 
-from .models import Post
-
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
-
-class PromiseForm(ModelForm):
-
+class DailyExpenseForm(forms.ModelForm):
     class Meta:
-        model = Post
-        fields = ['title', 'text','date']
+        model = DailyExpense
+        fields = ['date', 'ovqat', 'transport', 'salomatlik', 'boshqa', 'izoh']
         widgets = {
-            'date': DateInput(),
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'ovqat': forms.NumberInput(attrs={'class': 'form-control'}),
+            'transport': forms.NumberInput(attrs={'class': 'form-control'}),
+            'salomatlik': forms.NumberInput(attrs={'class': 'form-control'}),
+            'boshqa': forms.NumberInput(attrs={'class': 'form-control'}),
+            'izoh': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }

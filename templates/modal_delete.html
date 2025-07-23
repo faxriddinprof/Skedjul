@@ -1,0 +1,21 @@
+<!-- modal_delete.html -->
+<div class="modal fade" id="deleteModal{{ expense.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ expense.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'delete_expense' expense.pk %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel{{ expense.id }}">Xarajatni o‘chirish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Yopish"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>{{ expense.date }}</strong> sanasidagi xarajatni o‘chirishni istaysizmi?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor</button>
+          <button type="submit" class="btn btn-danger">O‘chirish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

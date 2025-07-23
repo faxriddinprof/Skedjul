@@ -1,91 +1,51 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-<script src="{% static 'js/script.js' %}" defer></script>
-
-<h1>this is home page </h1>
-<p><a href="{% url 'post_create' %}">Yangi post qo'shish</a></p>
-
-<div class="post-entry">
-    <table class="table table-bordered">
-        <thead>
+<h2 class="mb-4">📅 Kunlik xarajatlar ro‘yxati</h2>
+    
+<div class="table-responsive shadow rounded">
+    <table class="table table-bordered table-hover text-center align-middle">
+        <thead class="table-dark">
             <tr>
-                <th><b>N</b></th>
-                <th>Edit</th>
-                <th>Ish reja</th>
-                <th>Ish izohi</th>
+                <th>#</th>
                 <th>Sana</th>
-                <th>Holati</th>
+                <th>Ovqat</th>
+                <th>Transport</th>
+                <th>Salomatlik</th>
+                <th>Boshqa</th>
+                <th>Jami</th>
+                <th>Izoh</th>
+                <th>Amallar</th>
             </tr>
         </thead>
         <tbody>
-            {% for post in object_list %}
-            <tr data-post-id="{{ post.id }}">
+            {% for expense in expenses %}
+            <tr>
                 <td>{{ forloop.counter }}</td>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.ovqat }}</td>
+                <td>{{ expense.transport }}</td>
+                <td>{{ expense.salomatlik }}</td>
+                <td>{{ expense.boshqa }}</td>
+                <td><strong>{{ expense.total_sum }}</strong></td>
+                <td>{{ expense.izoh }}</td>
                 <td>
-                    <button class="open-edit-modal" data-id="{{ post.id }}" data-title="{{ post.title }}" data-text="{{ post.text }}" data-date="{{ post.date }}">Edit</button>
-                </td>
-                <td class="post-title">{{ post.title }}</td>
-                <td>{{ post.text }}</td>
-                <td class="post-date">{{ post.date }}</td>
-                <td>
-                    <button class="open-status-modal" data-id="{{ post.id }}" data-status="{{ post.holati }}">
-                        {% if post.holati %}Bajarildi{% else %}Bajarilmadi{% endif %}
-                    </button>
+                    <!-- Edit tugmasi -->
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ expense.id }}">✏️</button>
+                    <!-- Delete tugmasi -->
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ expense.id }}">🗑️</button>
                 </td>
             </tr>
+
+            <!-- Modallarni shu yerga include qilamiz -->
+            {% include 'modal_edit.html' with expense=expense %}
+            {% include 'modal_delete.html' with expense=expense %}
+
+            {% empty %}
+            <tr><td colspan="9">Xarajatlar yo‘q</td></tr>
             {% endfor %}
         </tbody>
     </table>
-</div>
-
-<!-- Edit Modal -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span class="close" id="editModalClose">&times;</span>
-            <h2>Postni tahrirlash</h2>
-        </div>
-        <div class="modal-body">
-            <form id="editForm">
-                {% csrf_token %}
-                <input type="hidden" name="post_id" id="post_id">
-
-                <label>Title:</label>
-                <textarea name="title" id="edit_title" required></textarea>
-
-                <label>Text:</label>
-                <textarea name="text" id="edit_text" required></textarea>
-
-                <label>Date:</label>
-                <input type="date" name="date" id="edit_date" required>
-
-                <button type="submit">Saqlash</button>
-                <button type="button" id="deleteBtn">Postni o'chirish</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Status Modal -->
-<div id="statusModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span class="close" id="statusModalClose">&times;</span>
-            <h2>Holatni o'zgartirish</h2>
-        </div>
-        <div class="modal-body">
-            <select id="newStatusSelect">
-                <option value="true">Bajarildi</option>
-                <option value="false">Bajarilmadi</option>
-            </select>
-        </div>
-        <div class="modal-footer">
-            <button id="saveStatusBtn">OK</button>
-        </div>
-    </div>
 </div>
 
 {% endblock %}

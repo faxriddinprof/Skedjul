@@ -1,103 +1,41 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from .models import Post
-from .forms import DateInput, PromiseForm
-from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, CreateView, View
 from django.http import JsonResponse
-from django.http import HttpResponseRedirect
-# Create your views here.
-
-
-class Homepageview(ListView):
-    model = Post
-    template_name = "home.html"
-
-
-class BlogCreateview(CreateView):
-    model = Post
-    form_class=PromiseForm
-    template_name='post_create.html'
-    success_url=reverse_lazy('home')
-
-class BlogDetailview(DetailView):
-    model=Post
-    template_name='post_detail.html'
-
-class BlogUpdateview(UpdateView):
-    model=Post
-    template_name='post_update.html'
-    fields=['title','text']
-    success_url=reverse_lazy('home')
-
-class BlogDeleteview(DeleteView):
-    model=Post
-    success_url=reverse_lazy('home')
-
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponseRedirect(self.get_object().get_absolute_url())
-#-----------------------change------------------------------------------------
-
-from django.http import JsonResponse
+from .models import DailyExpense
+from .forms import DailyExpenseForm
 from django.views.decorators.csrf import csrf_exempt
-from .models import Post
-import json
+class DailyExpenseListView(ListView):
+    model = DailyExpense
+    template_name = 'home.html'
+    context_object_name = 'expenses'
+    ordering = ['-date']  # oxirgi sana birinchi chiqadi
 
-@csrf_exempt
-def update_status_ajax(request, pk):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            post = Post.objects.get(pk=pk)
-            post.holati = data['status'] == 'true'
-            post.save()
-            return JsonResponse({'success': True, 'new_status': post.holati})
-        except Post.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Topilmadi'})
-    return JsonResponse({'success': False, 'error': 'Notog‘ri so‘rov'})
+class DailyExpenseCreateView(CreateView):
+    model = DailyExpense
+    form_class = DailyExpenseForm
+    template_name = 'add_expense.html'
+    success_url = reverse_lazy('home')
 
-
-
-from datetime import date
-
-@csrf_exempt
-def update_post_ajax(request, pk):
-    if request.method == 'POST':
-        try:
-            post = Post.objects.get(pk=pk)
-            data = json.loads(request.body)
-
-            # Sana validatsiyasi
-            try:
-                selected_date = date.fromisoformat(data['date'])
-            except ValueError:
-                return JsonResponse({'success': False, 'error': 'Noto‘g‘ri sana formati'})
-
-            if selected_date < date.today():
-                return JsonResponse({'success': False, 'error': 'Sana bugungi kundan oldin bo‘lishi mumkin emas'})
-
-            # Yangilash
-            post.title = data['title']
-            post.text = data['text']
-            post.date = selected_date
-            post.save()
-            return JsonResponse({'success': True})
-
-        except Post.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Post topilmadi'})
-
-    return JsonResponse({'success': False, 'error': 'Notog‘ri so‘rov'})
+# Optional: Delete qilish ham modal orqali bo'lishi mumkin
+class DeleteExpenseView(View):
+    def post(self, request, *args, **kwargs):
+        expense_id = kwargs.get("pk")
+        expense = get_object_or_404(DailyExpense, id=expense_id)
+        expense.delete()
+        return JsonResponse({'success': True})
 
 
 @csrf_exempt
-def delete_post_ajax(request, pk):
+def update_expense(request):
     if request.method == 'POST':
-        try:
-            post = Post.objects.get(pk=pk)
-            post.delete()
-            return JsonResponse({'success': True})
-        except Post.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Post topilmadi'})
-    return JsonResponse({'success': False, 'error': 'Notog‘ri so‘rov'})
+        expense_id = request.POST.get('id')
+        expense = get_object_or_404(DailyExpense, id=expense_id)
+        expense.date = request.POST.get('date')
+        expense.ovqat = request.POST.get('ovqat') or 0
+        expense.transport = request.POST.get('transport') or 0
+        expense.salomatlik = request.POST.get('salomatlik') or 0
+        expense.boshqa = request.POST.get('boshqa') or 0
+        expense.izoh = request.POST.get('izoh')
+        expense.save()
+        return redirect('/')  # Sahifani yangilaydi

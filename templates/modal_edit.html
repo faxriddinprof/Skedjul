@@ -1,0 +1,30 @@
+<!-- modal_edit.html -->
+<div class="modal fade" id="editModal{{ expense.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ expense.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editForm{{ expense.id }}" method="POST" action="{% url 'update_expense' %}">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ expense.id }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel{{ expense.id }}">Harajatni Tahrirlash</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Yopish"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label>Sana</label>
+            <input type="date" class="form-control" name="date" value="{{ expense.date|date:'Y-m-d' }}" required>
+          </div>
+          <div class="mb-2"><label>Ovqat</label><input type="number" class="form-control" name="ovqat" value="{{ expense.ovqat }}"></div>
+          <div class="mb-2"><label>Transport</label><input type="number" class="form-control" name="transport" value="{{ expense.transport }}"></div>
+          <div class="mb-2"><label>Salomatlik</label><input type="number" class="form-control" name="salomatlik" value="{{ expense.salomatlik }}"></div>
+          <div class="mb-2"><label>Boshqa</label><input type="number" class="form-control" name="boshqa" value="{{ expense.boshqa }}"></div>
+          <div class="mb-2"><label>Izoh</label><textarea class="form-control" name="izoh">{{ expense.izoh }}</textarea></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Saqlash</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
