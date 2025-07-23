@@ -5,7 +5,11 @@ from django.http import JsonResponse
 from .models import DailyExpense
 from .forms import DailyExpenseForm
 from django.views.decorators.csrf import csrf_exempt
-class DailyExpenseListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+class DailyExpenseListView(LoginRequiredMixin,ListView):
     model = DailyExpense
     template_name = 'home.html'
     context_object_name = 'expenses'
@@ -17,13 +21,9 @@ class DailyExpenseCreateView(CreateView):
     template_name = 'add_expense.html'
     success_url = reverse_lazy('home')
 
-# Optional: Delete qilish ham modal orqali bo'lishi mumkin
-class DeleteExpenseView(View):
-    def post(self, request, *args, **kwargs):
-        expense_id = kwargs.get("pk")
-        expense = get_object_or_404(DailyExpense, id=expense_id)
-        expense.delete()
-        return JsonResponse({'success': True})
+    def form_valid(self, form):
+        messages.success(self.request, "✅ Xarajat muvaffaqiyatli qo'shildi!")
+        return super().form_valid(form)
 
 
 @csrf_exempt
@@ -38,4 +38,15 @@ def update_expense(request):
         expense.boshqa = request.POST.get('boshqa') or 0
         expense.izoh = request.POST.get('izoh')
         expense.save()
+        messages.success(request, "✅ Xarajat muvaffaqiyatli yangilandi.")
         return redirect('/')  # Sahifani yangilaydi
+    
+
+@login_required
+def delete_expense(request, pk):
+    expense = get_object_or_404(DailyExpense, pk=pk)
+    if request.method == 'POST':
+        expense.delete()
+        messages.success(request, "Xarajat muvaffaqiyatli o‘chirildi.")
+        return redirect('home')  # o'zingizning bosh sahifa URL nomini qo'ying
+    return redirect('home')
