@@ -1,0 +1,45 @@
+/* Karta (card) uchun silliq soyalar va radius */
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+/* Har bir bo‘lim sarlavhasi */
+.card h6 {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+/* Emoji bilan kategoriya yozuvi */
+.card .d-flex .fs-4 {
+  font-size: 1.5rem;
+}
+
+/* Paragraphlar orasidagi masofa */
+.card p {
+  margin-bottom: 0.5rem;
+}
+
+/* Asosiy fon */
+body {
+  background-color: #f8f9fa;
+}
+
+/* Container masofasi */
+.container {
+  max-width: 1200px;
+}
+
+/* Responsive tuzilma uchun yaxshilanish */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+}

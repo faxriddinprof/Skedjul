@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+<head>
+    <meta charset="UTF-8">
+    <title>Statistika</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/statistics.css' %}">
+
+</head>
+{% block content %}
+<div class="container mt-4">
+  <div class="row gy-4">
+    <!-- 1. Kategoriya bo'yicha jami -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">1. Kategoriya bo'yicha jami harajatlar</h6>
+        <p class="small text-muted"> {% now "Y" %}-yildagi xarajatlaringiz kategoriyalar bo'yicha:</p>
+        {% for k, v in cat_totals.items %}
+          <div class="d-flex align-items-center mb-2">
+            <span class="fs-4 me-2">
+              {% if k == 'ovqat' %}🍽️{% elif k == 'transport' %}🚗{% elif k == 'salomatlik' %}💊{% else %}📦{% endif %}
+            </span>
+            <div>
+              <div class="fw-bold">{{ k|capfirst }}</div>
+              <div>{{ v|intcomma }} so'm</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 2. Trend (oy bo'yicha) -->
+    <div class="col-md-6 col-lg-8">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">2. Xarajatlar trend (oy bo'yicha)</h6>
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 3. Oylik & Yillik tahlil -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">3. Oylik va yillik tahlil</h6>
+        <p><strong>Oylik jami:</strong> {{ monthly_sum|intcomma }} so'm</p>
+        <p><strong>O'rtacha oylik:</strong> {{ avg_monthly|intcomma }} so'm</p>
+        <p><strong>Yillik jami:</strong> {{ yearly_sum|intcomma }} so'm</p>
+        <p><strong>O'rtacha yillik:</strong> {{ avg_yearly|intcomma }} so'm</p>
+      </div>
+    </div>
+
+    <!-- 4. Kategoriya ulushi -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">4. Kategoriya ulushi (%)</h6>
+        <canvas id="donutChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 5. Eng ko'p sarf kun va oy -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">5. Eng ko'p sarf kun & oy</h6>
+        {% if top_day %}
+        <p><strong>{{ top_day.date }}:</strong> {{ top_day.total|intcomma }} so'm</p>
+        {% endif %}
+        {% if top_month.month_name %}
+        <p><strong>{{ top_month.month_name }}:</strong> {{ top_month.total|intcomma }} so'm</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 6. Foiz ulushi -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">6. Kategoriya foiz ulushi</h6>
+        {% for k, v in perc.items %}
+          <p>{{ k|capfirst }}: {{ v }}%</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 7. Bashorat -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card p-3 h-100">
+        <h6 class="text-secondary">7. Bashorat</h6>
+        <p><strong>Oylik:</strong> {{ forecast_month|intcomma }} so'm</p>
+        <p><strong>Yillik:</strong> {{ forecast_year|intcomma }} so'm</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  window.MONTHS = {{ months|safe }};
+  window.TIME_SERIES = {{ time_series|safe }};
+  window.CAT_LABELS = {{ cat_labels|safe }};
+  window.CAT_DATA = {{ cat_data|safe }};
+</script>
+
+<!-- Rasmiy, versiya bilan aniq CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+<!-- So‘ng statistics.js -->
+<script src="{% static 'js/statistics.js' %}"></script>
+{% endblock %}

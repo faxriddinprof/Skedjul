@@ -20,10 +20,16 @@
         <a class="navbar-brand" href="{% url 'home' %}">📊 Xarajatlar</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">🏠 Bosh sahifa</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'statistics' %}" class="nav-link">📈 Statistika</a>
+                </li>
                 <li class="nav-item">
                     <a href="{% url 'add_expense' %}" class="nav-link">➕ Harajat Qo‘shish</a>
                 </li>
-                {% if user.is_authenticated %}
                 <li class="nav-item">
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -44,8 +50,6 @@
         {% endfor %}
     </div>
     {% endif %}
-
-    
     {% block content %}{% endblock %}
 </div>
 

@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.conf import settings
+
 
 KATEGORIYALAR = [
     ('ovqat', 'Ovqat'),
@@ -11,6 +13,7 @@ KATEGORIYALAR = [
 ]
 
 class DailyExpense(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     date = models.DateField(default=timezone.now)
     ovqat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     transport = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -31,3 +34,7 @@ class DailyExpense(models.Model):
         super().clean()
         if self.date < timezone.now().date():
             raise ValidationError({'date': "Sana bugungi kundan oldin bo'lishi mumkin emas."})
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
