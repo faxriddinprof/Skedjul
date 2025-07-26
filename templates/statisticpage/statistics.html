@@ -10,7 +10,6 @@
 
 </head>
 {% block content %}
-
 <h1 class="text-center mb-4" style='color:blue'>Statistik ma'lumotlar 📈</h1>
 {% comment %} <div class="text-center mb-4">
     <a href="{% url 'export_csv' %}" class="btn btn-primary">CSV ga eksport qilish</a>
@@ -18,11 +17,19 @@
     <a href="{% url 'export_excel' %}" class="btn btn-success">Excel ga eksport qilish</a>
 </div> {% endcomment %}
 
-{% if not cat_totals %}
-<div class="alert alert-info text-center">
-    <strong>Statistika mavjud emas!</strong> Iltimos, avval xarajat qo'shing.
+<form method="get" class="year-selector">
+  <label for="year">Yilni tanlang:</label>
+  <select name="year" id="year" onchange="this.form.submit()">
+    {% for y in all_years %}
+      <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="text-center mb-4">
+    <h5>Tanlangan yil: {{ selected_year }}</h5>
+    <p>Statistikalar {{ selected_year }} yili uchun ko'rsatilmoqda.</p>
 </div>
-{% endif %}
 
 <div class="container mt-4">
   <div class="row gy-4">
@@ -30,7 +37,7 @@
     <div class="col-md-6 col-lg-4">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">1. Kategoriya bo'yicha jami harajatlar</h6>
-        <p class="small text-muted"> {% now "Y" %}-yildagi xarajatlaringiz kategoriyalar bo'yicha:</p>
+        <p class="small text-muted"> {{ selected_year }}-yildagi xarajatlaringiz kategoriyalar bo'yicha:</p>
         {% for k, v in cat_totals.items %}
           <div class="d-flex align-items-center mb-2">
             <span class="fs-4 me-2">

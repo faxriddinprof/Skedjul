@@ -20,6 +20,11 @@ class DailyExpense(models.Model):
     salomatlik = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     boshqa = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     izoh = models.TextField(blank=True, null=True)
+    year = models.IntegerField(editable=False, db_index=True,null=True)
+
+    def save(self, *args, **kwargs):
+        self.year = self.date.year
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.date} - Jami: {self.total_sum()}"
