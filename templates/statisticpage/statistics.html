@@ -10,6 +10,20 @@
 
 </head>
 {% block content %}
+
+<h1 class="text-center mb-4" style='color:blue'>Statistik ma'lumotlar 📈</h1>
+{% comment %} <div class="text-center mb-4">
+    <a href="{% url 'export_csv' %}" class="btn btn-primary">CSV ga eksport qilish</a>
+    <a href="{% url 'export_pdf' %}" class="btn btn-secondary">PDF ga eksport qilish</a>  
+    <a href="{% url 'export_excel' %}" class="btn btn-success">Excel ga eksport qilish</a>
+</div> {% endcomment %}
+
+{% if not cat_totals %}
+<div class="alert alert-info text-center">
+    <strong>Statistika mavjud emas!</strong> Iltimos, avval xarajat qo'shing.
+</div>
+{% endif %}
+
 <div class="container mt-4">
   <div class="row gy-4">
     <!-- 1. Kategoriya bo'yicha jami -->
@@ -53,10 +67,11 @@
     <!-- 4. Kategoriya ulushi -->
     <div class="col-md-6 col-lg-6">
       <div class="card p-3 h-100">
-        <h6 class="text-secondary">4. Kategoriya ulushi (%)</h6>
+        <h6 class="text-secondary">4. Kategorik harajatlarning umumiy harajatdagi ulushi qiymati</h6>
         <canvas id="donutChart"></canvas>
       </div>
     </div>
+
 
     <!-- 5. Eng ko'p sarf kun va oy -->
     <div class="col-md-6 col-lg-4">
@@ -70,6 +85,7 @@
         {% endif %}
       </div>
     </div>
+
 
     <!-- 6. Foiz ulushi -->
     <div class="col-md-6 col-lg-4">

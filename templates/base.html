@@ -11,7 +11,6 @@
     <script src="{% static 'js/modals.js' %}" defer></script>
     <script src="{% static 'js/edit_modal.js' %}"></script>
     <script src="{% static 'js/deleteModal.js' %}"></script>
-
 </head>
 <body>
 
@@ -21,6 +20,7 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
+                <h4>welcome {{ user.username }} !</h4>
                 <li class="nav-item">
                     <a href="{% url 'home' %}" class="nav-link">🏠 Bosh sahifa</a>
                 </li>
