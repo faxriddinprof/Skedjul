@@ -7,24 +7,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/statistics.css' %}">
-
 </head>
-{% block content %}
-<h1 class="text-center mb-4" style='color:blue'>Statistik ma'lumotlar 📈</h1>
-{% comment %} <div class="text-center mb-4">
-    <a href="{% url 'export_csv' %}" class="btn btn-primary">CSV ga eksport qilish</a>
-    <a href="{% url 'export_pdf' %}" class="btn btn-secondary">PDF ga eksport qilish</a>  
-    <a href="{% url 'export_excel' %}" class="btn btn-success">Excel ga eksport qilish</a>
-</div> {% endcomment %}
 
-<form method="get" class="year-selector">
-  <label for="year">Yilni tanlang:</label>
+{% block content %}
+<h1 class="text-center mb-4" style="color:#007bff">Statistik ma'lumotlar 📈</h1>
+<form method="get" class="year-select-form">
+  <label for="year">📅 Yil:</label>
   <select name="year" id="year" onchange="this.form.submit()">
     {% for y in all_years %}
       <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
     {% endfor %}
   </select>
 </form>
+
 
 <div class="text-center mb-4">
     <h5>Tanlangan yil: {{ selected_year }}</h5>
@@ -33,35 +28,40 @@
 
 <div class="container mt-4">
   <div class="row gy-4">
-    <!-- 1. Kategoriya bo'yicha jami -->
-    <div class="col-md-6 col-lg-4">
-      <div class="card p-3 h-100">
-        <h6 class="text-secondary">1. Kategoriya bo'yicha jami harajatlar</h6>
-        <p class="small text-muted"> {{ selected_year }}-yildagi xarajatlaringiz kategoriyalar bo'yicha:</p>
+
+    <!-- Umumiy xarajatlar sarlavhasi -->
+    <div class="col-12">
+      <div class="summary-header text-center py-2">
+        <h4 class="text-muted">Umumiy xarajatlar kategoriyalar kesimida</h4>
+      </div>
+    </div>
+
+    <!-- 1. Kategoriya bo'yicha jami har bir kategoriya uchun alohida kartochkalar -->
+    <div class="col-12">
+      <div class="row text-center gy-3 stat-cards">
         {% for k, v in cat_totals.items %}
-          <div class="d-flex align-items-center mb-2">
-            <span class="fs-4 me-2">
-              {% if k == 'ovqat' %}🍽️{% elif k == 'transport' %}🚗{% elif k == 'salomatlik' %}💊{% else %}📦{% endif %}
-            </span>
-            <div>
-              <div class="fw-bold">{{ k|capfirst }}</div>
-              <div>{{ v|intcomma }} so'm</div>
+          <div class="col-md-3">
+            <div class="card category-card p-3 shadow-sm h-100">
+              <div class="fs-2 category-icon">
+                {% if k == 'ovqat' %}🍽️{% elif k == 'transport' %}🚗{% elif k == 'salomatlik' %}💊{% else %}📦{% endif %}
+              </div>
+              <div class="fw-bold mt-2">{{ k|capfirst }}</div>
+              <div class="text-muted">{{ v|intcomma }} so'm</div>
             </div>
           </div>
         {% endfor %}
       </div>
     </div>
 
-    <!-- 2. Trend (oy bo'yicha) -->
-    <div class="col-md-6 col-lg-8">
+    <!-- 2. Xarajatlar trend (oy bo'yicha) + 3. Oylik/Yillik tahlil yonma-yon -->
+    <div class="col-lg-8 col-md-6">
       <div class="card p-3 h-100">
-        <h6 class="text-secondary">2. Xarajatlar trend (oy bo'yicha)</h6>
-        <canvas id="lineChart"></canvas>
+        <h6 class="text-secondary">2. Xarajatlar trendi (Ustun + Chiziq grafik)</h6>
+        <canvas id="comboChart"></canvas>
+        <small class="text-muted">Ko‘k ustunlar – jami xarajatlar, Sariq chiziq – o'tgan oyga nisbatan o‘sish foizi (%)</small>
       </div>
     </div>
-
-    <!-- 3. Oylik & Yillik tahlil -->
-    <div class="col-md-6 col-lg-6">
+    <div class="col-lg-4 col-md-6">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">3. Oylik va yillik tahlil</h6>
         <p><strong>Oylik jami:</strong> {{ monthly_sum|intcomma }} so'm</p>
@@ -72,16 +72,15 @@
     </div>
 
     <!-- 4. Kategoriya ulushi -->
-    <div class="col-md-6 col-lg-6">
+    <div class="col-lg-6">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">4. Kategorik harajatlarning umumiy harajatdagi ulushi qiymati</h6>
         <canvas id="donutChart"></canvas>
       </div>
     </div>
 
-
     <!-- 5. Eng ko'p sarf kun va oy -->
-    <div class="col-md-6 col-lg-4">
+    <div class="col-md-6 col-lg-3">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">5. Eng ko'p sarf kun & oy</h6>
         {% if top_day %}
@@ -93,9 +92,8 @@
       </div>
     </div>
 
-
     <!-- 6. Foiz ulushi -->
-    <div class="col-md-6 col-lg-4">
+    <div class="col-md-6 col-lg-3">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">6. Kategoriya foiz ulushi</h6>
         {% for k, v in perc.items %}
@@ -105,7 +103,7 @@
     </div>
 
     <!-- 7. Bashorat -->
-    <div class="col-md-6 col-lg-4">
+    <div class="col-md-6 col-lg-3">
       <div class="card p-3 h-100">
         <h6 class="text-secondary">7. Bashorat</h6>
         <p><strong>Oylik:</strong> {{ forecast_month|intcomma }} so'm</p>
@@ -119,13 +117,10 @@
 <script>
   window.MONTHS = {{ months|safe }};
   window.TIME_SERIES = {{ time_series|safe }};
+  window.RATIOS = {{ ratios|safe }};
   window.CAT_LABELS = {{ cat_labels|safe }};
   window.CAT_DATA = {{ cat_data|safe }};
 </script>
-
-<!-- Rasmiy, versiya bilan aniq CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-
-<!-- So‘ng statistics.js -->
 <script src="{% static 'js/statistics.js' %}"></script>
 {% endblock %}

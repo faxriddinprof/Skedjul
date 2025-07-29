@@ -5,6 +5,8 @@ from main.models import DailyExpense
 
 # analytics.py
 #bu funksiya kategoriyalar bo'yicha jami xarajatlarni hisoblaydi
+
+# 1
 def get_category_totals(user, year=None):
     if year is None:
         year = date.today().year
@@ -16,29 +18,51 @@ def get_category_totals(user, year=None):
         'boshqa': qs.aggregate(sum=Sum('boshqa'))['sum'] or 0,
     }
 
+
+
+# 2
 #bu funksiya vaqt seriyasini va oylik ma'lumotlarni qaytaradi
-def get_time_series(user, year=None):
+def get_time_series_with_ratio(user, year=None):
     if year is None:
         year = date.today().year
-    months = [calendar.month_abbr[m] for m in range(1, 13)]
-    data = {m: 0 for m in range(1, 13)}
 
-    qs = DailyExpense.objects.filter(user=user, year=year)\
-        .values_list('date__month')\
+    months = [calendar.month_abbr[m] for m in range(1, 13)]
+    data = {m: {'total': 0, 'ratio': None} for m in range(1, 13)}  # ratio default: None
+
+    qs = DailyExpense.objects.filter(user=user, date__year=year)\
+        .values('date__month')\
         .annotate(monthly=Sum(F('ovqat') + F('transport') + F('salomatlik') + F('boshqa')))
 
-    for month, total in qs:
-        data[month] = total
-    return months, [data[m] for m in range(1, 13)]
+    for entry in qs:
+        month = entry['date__month']
+        total = entry['monthly']
+        data[month]['total'] = total
 
+    # Hisoblash: har oy uchun o‘sish % faqat agar ikkalasida ham ma'lumot bo‘lsa
+    prev = None
+    for m in range(1, 13):
+        curr = data[m]['total']
+        if prev is not None and prev != 0 and curr != 0:
+            data[m]['ratio'] = round(((curr - prev) / prev) * 100, 2)
+        else:
+            data[m]['ratio'] = 0  # 👉 Agar ma'lumot bo'lmasa yoki nol bo‘lsa – 0
+        prev = curr if curr != 0 else prev  # 👉 keyingi hisobda 0 ni hisobga olmasin
+
+    totals = [data[m]['total'] for m in range(1, 13)]
+    ratios = [data[m]['ratio'] for m in range(1, 13)]
+    return months, totals, ratios
+
+# 3
 #bu funksiya oylik va yillik umumiy ma'lumotlarni qaytaradi
 def get_monthly_yearly_summary(user, year=None):
     if year is None:
         year = date.today().year
 
-    months, ts = get_time_series(user, year)
-    monthly_sum = sum(ts)
+    # get_time_series_with_ratio funksiyasidan foydalanamiz
+    months, totals, _ = get_time_series_with_ratio(user, year)
+    monthly_sum = sum(totals)
 
+    # Agar bu yil hozirgi yil bo‘lsa, faqat o'tgan oylargacha o‘rtacha olamiz
     months_done = 12 if year < date.today().year else date.today().month
     avg_monthly = monthly_sum / months_done if months_done else 0
 
@@ -62,6 +86,9 @@ def get_monthly_yearly_summary(user, year=None):
         'avg_yearly': round(avg_yearly, 2),
     }
 
+
+
+# 3
 #bu funksiya eng ko'p sarflangan kun va oylarni qaytaradi
 def get_top_spend(user, year=None):
     if year is None:
@@ -84,11 +111,15 @@ def get_top_spend(user, year=None):
 
     return top_day, top_month
 
+
+# 4
 #bu funksiya kategoriyalar bo'yicha foiz ulushlarini hisoblaydi
 def get_percentage_contribution(category_totals):
     total = sum(category_totals.values()) or 1
     return {k: round(v / total * 100, 2) for k, v in category_totals.items()}
 
+
+# 5
 #bu funksiya kelajakdagi xarajatlarni prognoz qiladi
 def get_forecast(user, year=None):
     if year is None:
